@@ -1,18 +1,29 @@
 # Phishing Detector
 
-A browser-based phishing message checker. Paste a suspicious URL, email, or text to see common warning signs and an explainable heuristic risk score.
+A browser-based phishing checker that combines explainable local warning-sign rules with an optional Google Safe Browsing URL lookup.
 
-## Run
+## Requirements
 
-Open [index.html](index.html) in a modern browser. This first version is a static page with no build step or server.
+- Node.js 20 or newer
+- A Google Cloud project with the Google Safe Browsing API enabled and an API key for live lookups
 
-## What it does
+## Run locally
 
-- Checks URL structure and message wording for common warning signs.
-- Explains the signals behind its heuristic score.
-- Stores up to 20 recent checks in browser local storage.
-- Keeps pasted text in the browser; no backend request is made.
+PowerShell:
 
-## Current limits
+```powershell
+$env:SAFE_BROWSING_API_KEY = "your-key"
+npm start
+```
 
-This is an initial rule-based prototype, not a trained AI model. It does not visit submitted URLs, validate website ownership, or consult a live malicious-domain feed. A low score does not mean a message is safe. Production use would need a maintained threat-intelligence provider, an evaluated detection model, and a backend with explicit privacy and security controls.
+Then open http://localhost:3000. To use local heuristic checks without the external lookup, omit the API key. Do not put a real key in source files or commit it.
+
+## How checks work
+
+The browser analyzes message text and URL structure locally. It extracts up to 10 HTTP or HTTPS URLs and sends only those URLs to the app backend. The backend validates them and, when configured, calls Google's Safe Browsing API. The API key stays in the server environment. The full email or message is not sent to Google. Recent checks are stored in the browser's local storage.
+
+Google may receive URLs submitted for live checking. Google Safe Browsing is for non-commercial use unless you have a separate agreement. Its results may be inaccurate; a missing match is not proof that a message is safe. Review [Google Safe Browsing's terms](https://developers.google.com/safe-browsing/terms) before deployment.
+
+## Deployment
+
+Run `npm start` on a Node.js 20+ host and set `SAFE_BROWSING_API_KEY` in the host's secret/environment settings. Serve over HTTPS. Restrict the key in Google Cloud Console to the Safe Browsing API and set appropriate quotas. Do not commit `.env` files or expose this key to browser code.
