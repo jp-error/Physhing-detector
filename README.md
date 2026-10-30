@@ -32,7 +32,7 @@ The browser analyzes the message text and URL structure locally. It extracts up 
 
 The risk score is a heuristic indicator, not a probability or a definitive verdict. A URL not found in a threat feed is not necessarily safe, and a low score does not prove a message is genuine. The local dashboard and history are stored in the current browser and are not synchronized across devices. Clearing browser site data may remove them.
 
-## Deployment and security
+## Deployment and security control
 
 Run `npm start` on a Node.js 20+ host and set `SAFE_BROWSING_API_KEY` in the host's secret/environment settings. Serve over HTTPS. Restrict the key in Google Cloud Console to the Safe Browsing API and set appropriate quotas. Do not commit `.env` files or expose this key to browser code.
 
